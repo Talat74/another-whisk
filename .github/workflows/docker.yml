@@ -1,0 +1,50 @@
+name: docker pipeline ci/cd
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/anotherwhisk:latest
+      CONTAINER_NAME: anotherwhisk-app
+      PORT: 3000 
+    steps:
+      
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: login to deocker hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+     
+      - name: build docker image
+        run: |
+          docker build -t $IMAGE_NAME  .
+
+
+      - name: push docker image
+        run: |
+          docker push $IMAGE_NAME
+
+      - name: stop old container
+        run: |
+          docker stop $CONTAINER_NAME || true
+          docker rm $CONTAINER_NAME || true
+
+
+     - name: run new container
+       run: |
+         docker run -d \
+           --name $CONTAINER_NAME \
+           -p $PORT:3000 \
+           $IMAGE_NAME
+
+    - name: verify deployment
+      run: |
+       docker ps | grep $CONTAINER_NAME || (echo "container failed to start" && exit 1)       

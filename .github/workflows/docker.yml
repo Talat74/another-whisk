@@ -56,13 +56,13 @@ jobs:
               docker pull $IMAGE_NAME
 
               docker stop $CONTAINER_NAME || true
-              dokcer rm $CONTAINER_NAME || true
+              docker rm $CONTAINER_NAME || true
 
-              dokcer run -d \
+              docker run -d \
                  --restart always \
                  --name $CONTAINER_NAME \
                  -p $PORT:3000 \
                  $IMAGE_NAME
             
-              dokcer ps
+              docker ps
             "

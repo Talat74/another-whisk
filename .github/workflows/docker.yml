@@ -29,15 +29,15 @@ jobs:
      
       - name: build docker image
         run: |
-          docker build -t $IMAGE_NAME  .
+          sudo docker build -t $IMAGE_NAME  .
       
       - name: tag image with version
         run: |
-          docker tag $IMAGE_NAME ${{ secrets.DOCKERHUB_USERNAME }}/anotherwhisk:${{ github.sha }}
+          sudo docker tag $IMAGE_NAME ${{ secrets.DOCKERHUB_USERNAME }}/anotherwhisk:${{ github.sha }}
 
       - name: push docker image
         run: |
-          docker push $IMAGE_NAME
+          sudo docker push $IMAGE_NAME
  
       - name: deploy to GCP
         uses: google-github-actions/auth@v2 
@@ -53,16 +53,16 @@ jobs:
           gcloud compute ssh docker-vm \
             --zone us-central1-f \
             --command " 
-              docker pull $IMAGE_NAME
+              sudo docker pull $IMAGE_NAME
 
-              docker stop $CONTAINER_NAME || true
-              docker rm $CONTAINER_NAME || true
+              sudo docker stop $CONTAINER_NAME || true
+              sudo docker rm $CONTAINER_NAME || true
 
-              docker run -d \
+              sudo docker run -d \
                  --restart always \
                  --name $CONTAINER_NAME \
                  -p $PORT:3000 \
                  $IMAGE_NAME
             
-              docker ps
+              sudo docker ps
             "

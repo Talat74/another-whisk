@@ -8,15 +8,16 @@ const app = express();
 const config = yaml.load(fs.readFileSync("config/config.yaml", "utf8"));
 
 // routes
-app.get("/", (req, res) => {
-  res.send(`Hello from ${config.app_name}`);
+
+app.get(["/", "/anotherwhisk"], (req, res) => {
+  res.send("Hello from app");
 });
 
-app.get("/health", (req, res) => {
+app.get(["/health", "/anotherwhisk/health"], (req, res) => {
   res.json({ status: "ok" });
 });
 
-app.get("/version", (req, res) => {
+app.get(["/version", "/anotherwhisk/version"], (req, res) => {
   res.json({ version: config.version });
 });
 

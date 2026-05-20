@@ -18,7 +18,7 @@ spec:
       containers: 
         - name: anotherwhisk
           image: talat74/anotherwhisk:latest
-
+         
           ports:
             - containerPort: 3000
 
@@ -28,7 +28,7 @@ kind: Service
 metadata:
   name: anotherwhisk-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP
 
   selector:
     app: anotherwhisk
